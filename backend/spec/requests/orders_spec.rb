@@ -1,11 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe '/orders' do
+  fixtures :products
+
   specify 'POST /orders' do
     post '/orders', params: {
       order: {
         items: [
-          { product_id: 100, quantity: 10 },
+          { product_id: 100, quantity: 11 },
           { product_id: 200, quantity: 20 },
         ],
       },
@@ -19,7 +21,7 @@ RSpec.describe '/orders' do
         items: [
           {
             id: an_instance_of(Integer),
-            quantity: 10,
+            quantity: 11,
             product: { id: 100, title: "High Quality", price: 2000 },
           }, {
             id: an_instance_of(Integer),
@@ -27,14 +29,11 @@ RSpec.describe '/orders' do
             product: { id: 200, title: "Premium", price: 3000 },
           },
         ],
-        total: 80000,
-=begin
         adjustments: [
-          { name: "Shipping", amount: 0 },
-          { name: "Bulk discount", amount: -8000 },
+          { description: "Shipping", amount: 0 },
+          { description: "Bulk discount", amount: -8200 },
         ],
-        total: 72000,
-=end
+        total: 73800,
       },
     })
   end

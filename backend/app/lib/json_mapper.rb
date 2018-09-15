@@ -8,6 +8,7 @@ class JSONMapper < TypeMapper
     {
       id: order.id,
       items: map(order.items),
+      adjustments: map(order.adjustments),
       total: order.total,
     }
   end
@@ -25,6 +26,13 @@ class JSONMapper < TypeMapper
       id: item.id,
       quantity: item.quantity,
       product: map(item.product),
+    }
+  end
+
+  def_mapping(Adjustment) do |adj|
+    {
+      description: adj.description,
+      amount: adj.amount,
     }
   end
 

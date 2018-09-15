@@ -22,8 +22,8 @@ class CreateOrder
   def new_order
     Order.new.tap do |order|
       build_items(order.items)
-      #order.adjustments = []
-      order.total = calculate_total(order)
+      build_adjustments(order)
+      order.total = order.calculate_total
     end
   end
 
@@ -33,13 +33,22 @@ class CreateOrder
     end
   end
 
-  def calculate_total(order)
-    gross = order.items
-      .map { |i| i.product.price * i.quantity }
-      .sum
+  def build_adjustments(order)
+    order.adjustments.build(description: "Shipping", amount: shipping(order))
+    if order.total_units > 30
+      order.adjustments.build(description: "Bulk discount", amount: bulk_discount(order))
+    end
+  end
 
-    adj = 0 #order.adjustments.map(&:amount).sum
+  def shipping(order)
+    if order.total_units < 10
+      3000
+    else
+      0
+    end
+  end
 
-    gross - adj
+  def bulk_discount(order)
+    (-0.1 * order.total_before_adjustments).round
   end
 end
