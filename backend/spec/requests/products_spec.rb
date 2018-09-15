@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe '/products' do
-  skip 'GET /products' do
-    response = get('/products')
+  specify 'GET /products' do
+    get('/products')
     expect(response).to be_ok
-    expect(response.body).to eq({
+    expect(response).to contain_json({
       success: true,
       payload: {
         products: [
