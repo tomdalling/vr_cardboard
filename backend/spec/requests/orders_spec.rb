@@ -16,8 +16,7 @@ RSpec.describe '/orders' do
 
       expect(response).to be_created
       expect(response).to contain_json({
-        success: true,
-        payload: {
+        data: {
           id: an_instance_of(Integer),
           confirmed: false,
           items: [
@@ -51,7 +50,6 @@ RSpec.describe '/orders' do
 
       expect(response.status).to eq(422)
       expect(response).to contain_json({
-        success: false,
         errors: ["Items is invalid"],
       })
     end

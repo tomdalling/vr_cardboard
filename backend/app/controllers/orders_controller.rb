@@ -2,7 +2,7 @@ class OrdersController < ApplicationController
   def create
     order = CreateOrder.(order_params)
     if order.valid?
-      render_payload(order, status: :created)
+      render_success(order, status: :created)
     else
       render_errors(order)
     end
@@ -12,7 +12,7 @@ class OrdersController < ApplicationController
     order = Order.find(params[:id])
     order.confirmed = true
     if order.save!
-      render_payload(order)
+      render_success(order)
     else
       render_errors(order)
     end

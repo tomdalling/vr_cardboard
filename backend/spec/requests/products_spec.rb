@@ -8,8 +8,7 @@ RSpec.describe '/products' do
 
     expect(response).to be_ok
     expect(response).to contain_json({
-      success: true,
-      payload: {
+      data: {
         products: [
           { id: 100, title: "High Quality", price: 2000 },
           { id: 200, title: "Premium", price: 3000 },
