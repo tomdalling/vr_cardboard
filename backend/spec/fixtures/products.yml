@@ -1,0 +1,9 @@
+high_quality:
+  id: 100
+  title: "High Quality"
+  price: 2000
+
+premium:
+  id: 200
+  title: "Premium"
+  price: 3000
