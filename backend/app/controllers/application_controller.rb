@@ -1,8 +1,8 @@
 class ApplicationController < ActionController::API
-  def render_payload(payload)
-    render json: {
+  def render_payload(payload, status: :ok)
+    render status: status, json: {
       success: true,
-      payload: payload,
+      payload: JSONMapper.(payload),
     }
   end
 end

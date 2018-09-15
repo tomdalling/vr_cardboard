@@ -5,6 +5,7 @@ RSpec.describe '/products' do
 
   specify 'GET /products' do
     get('/products')
+
     expect(response).to be_ok
     expect(response).to contain_json({
       success: true,

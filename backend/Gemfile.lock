@@ -1,3 +1,9 @@
+GIT
+  remote: https://github.com/tomdalling/type_mapper.git
+  revision: 4f663eb895b6d1fdc78cece88432ad145f02e489
+  specs:
+    type_mapper (1.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -160,6 +166,7 @@ DEPENDENCIES
   spring
   spring-watcher-listen (~> 2.0.0)
   sqlite3
+  type_mapper!
   tzinfo-data
 
 RUBY VERSION
