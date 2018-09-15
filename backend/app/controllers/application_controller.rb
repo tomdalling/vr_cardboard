@@ -5,4 +5,11 @@ class ApplicationController < ActionController::API
       payload: JSONMapper.(payload),
     }
   end
+
+  def render_errors(model, status: 422)
+    render status: status, json: {
+      success: false,
+      errors: model.errors.to_a,
+    }
+  end
 end

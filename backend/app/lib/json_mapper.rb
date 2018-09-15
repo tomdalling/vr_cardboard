@@ -7,6 +7,7 @@ class JSONMapper < TypeMapper
   def_mapping(Order) do |order|
     {
       id: order.id,
+      confirmed: order.confirmed,
       items: map(order.items),
       adjustments: map(order.adjustments),
       total: order.total,

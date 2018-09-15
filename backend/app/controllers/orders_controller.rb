@@ -1,7 +1,21 @@
 class OrdersController < ApplicationController
   def create
     order = CreateOrder.(order_params)
-    render_payload(order, status: :created)
+    if order.valid?
+      render_payload(order, status: :created)
+    else
+      render_errors(order)
+    end
+  end
+
+  def confirm
+    order = Order.find(params[:id])
+    order.confirmed = true
+    if order.save!
+      render_payload(order)
+    else
+      render_errors(order)
+    end
   end
 
   private

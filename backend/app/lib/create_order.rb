@@ -22,8 +22,8 @@ class CreateOrder
   def new_order
     Order.new.tap do |order|
       build_items(order.items)
-      build_adjustments(order)
-      order.total = order.calculate_total
+      build_adjustments(order) if order.valid?
+      order.total = order.calculate_total if order.valid?
     end
   end
 
