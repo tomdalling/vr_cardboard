@@ -7,40 +7,20 @@ class Server {
       .then(payload => payload.products)
   }
 
-  fetchOrder() {
-    //TODO: proper backend fetch
-    return new Promise(function(resolve, reject) {
-      setTimeout(() => resolve({
-        items: [
-          {
-            quantity: 2,
-            product: { id: 100, title: "High Quality", price: 2000 },
-          }, {
-            quantity: 5,
-            product: { id: 200, title: "Premium", price: 3000 },
-          },
-        ],
-        adjustments: [
-          { description: "Shipping", amount: 3000 },
-          { description: "Bulk discount", amount: -5000 },
-        ],
-        total: 12345,
-        dirty: false,
-        confirmed: false,
-      }), 1000)
-    })
+  fetchCurrentOrder() {
+    return this.request("/orders/current")
   }
 
   addToOrder(product, quantity) {
     //TODO: here
     console.log("Add to order:", product, quantity)
-    return this.fetchOrder()
+    return this.fetchCurrentOrder()
   }
 
   submitOrder() {
     //TODO: here
     console.log("Submit order")
-    return this.fetchOrder()
+    return this.fetchCurrentOrder()
       .then(order => ({...order, confirmed: true}))
   }
 
@@ -69,7 +49,7 @@ class App extends Component {
 
   componentDidMount() {
     this.fetchProducts()
-    this.fetchOrder()
+    this.fetchCurrentOrder()
   }
 
   fetchProducts() {
@@ -77,8 +57,9 @@ class App extends Component {
       .then(products => this.setState({ products: products }))
   }
 
-  fetchOrder() {
-    this.server.fetchOrder()
+  fetchCurrentOrder() {
+    this.server.fetchCurrentOrder()
+      .then(order => ({...order, dirty: false}))
       .then(order => this.setState({ order: order }))
   }
 
