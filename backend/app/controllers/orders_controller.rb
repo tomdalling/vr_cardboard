@@ -4,15 +4,6 @@ class OrdersController < ApplicationController
     render_success(order)
   end
 
-  def create
-    order = CreateOrder.(order_params)
-    if order.valid?
-      render_success(order, status: :created)
-    else
-      render_errors(order)
-    end
-  end
-
   def confirm
     order = Order.find(params[:id])
     order.confirmed = true
