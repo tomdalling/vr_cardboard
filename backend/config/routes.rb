@@ -3,5 +3,6 @@ Rails.application.routes.draw do
   resources :orders, only: %i(create) do
     get 'current', on: :collection
     post 'confirm', on: :member
+    resources :items, only: %i(create)
   end
 end

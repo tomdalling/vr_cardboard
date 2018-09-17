@@ -18,9 +18,29 @@ RSpec.describe '/orders' do
         items: [],
         adjustments: [],
         total: 0,
-        confirmed: false,
       },
     })
+  end
+
+  specify 'POST /orders/:id/items' do
+    order = orders(:unconfirmed)
+    product = products(:premium)
+
+    post "/orders/#{order.id}/items", params: {
+      item: {
+        product_id: product.id,
+        quantity: 123,
+      }
+    }
+    order.reload
+
+    expect(order.items.first).to have_attributes(
+      product_id: product.id,
+      quantity: 123,
+    )
+    expect(order.adjustments).not_to be_empty
+
+    expect(response).to contain_json(data: JSONMapper.(order))
   end
 
   describe 'POST /orders' do
