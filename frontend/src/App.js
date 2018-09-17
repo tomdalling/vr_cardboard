@@ -9,6 +9,7 @@ class App extends Component {
       products: null,
     }
     this.fetchProducts()
+    this.fetchOrder()
   }
 
   fetchProducts() {
@@ -21,9 +22,39 @@ class App extends Component {
     }, 500)
   }
 
+  fetchOrder() {
+    //TODO: proper backend fetch
+    setTimeout(() => {
+      this.setState({ order: {
+        items: [
+          {
+            quantity: 2,
+            product: { id: 100, title: "High Quality", price: 2000 },
+          }, {
+            quantity: 5,
+            product: { id: 200, title: "Premium", price: 3000 },
+          },
+        ],
+        adjustments: [
+          { description: "Shipping", amount: 3000 },
+          { description: "Bulk discount", amount: -5000 },
+        ],
+        total: 12345,
+        dirty: false,
+      } })
+    }, 500)
+  }
+
   handleAddToOrder = (product, quantity) => {
     //TODO: here
-    console.log(product, quantity)
+    console.log("Add to order:", product, quantity)
+    this.setState({ order: {...this.state.order, dirty: true} })
+    this.fetchOrder()
+  }
+
+  handleOrderSubmit = () => {
+    //TODO: here
+    console.log("Submit order:", this.state.order)
   }
 
   render() {
@@ -37,7 +68,10 @@ class App extends Component {
             />
         </div>
         <div style={{ float: 'right' }}>
-          <Order order={this.state.order} />
+          <Order
+            order={this.state.order}
+            onSubmit={this.handleOrderSubmit}
+            />
         </div>
       </div>
     )
@@ -117,12 +151,79 @@ class Product extends Component {
 
 class Order extends Component {
   render() {
+    const order = this.props.order
+
+    if(!order) {
+      return <div>Loading order...</div>
+    }
+
+    const items = order.items.map(i =>
+      <OrderItem item={i} key={i.product.id} />
+    )
+    const adjustments = order.adjustments.map(adj =>
+      <Adjustment
+        description={adj.description}
+        amount={adj.amount}
+        key={adj.description}
+        />
+    )
+    const total = <Adjustment description="Total" amount={order.total} key="Total"/>
+
     return (
-      <form>
-        Order form goes here
+      <form onSubmit={this.props.onSubmit}>
+        <h2>Order</h2>
+        { order.items.length === 0 ? (
+          <p>No items yet</p>
+        ) : (
+          <div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Quantity</th>
+                  <th>Unit Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                { items }
+                { order.dirty ? (
+                  <tr><td colSpan="4">Updating order...</td></tr>
+                ) : (
+                  [...adjustments, total]
+                ) }
+              </tbody>
+            </table>
+            { !order.dirty && <input type="submit" value="Submit order" /> }
+          </div>
+        ) }
       </form>
     )
   }
+}
+
+class OrderItem extends Component {
+  render() {
+    const item = this.props.item
+
+    return (
+      <tr>
+        <td>{item.product.title}</td>
+        <td>{item.quantity}</td>
+        <td>{formatCurrency(item.product.price)}</td>
+        <td>{formatCurrency(item.product.price * item.quantity)}</td>
+      </tr>
+    )
+  }
+}
+
+function Adjustment(props) {
+  return (
+    <tr>
+      <td colSpan="3">{ props.description }</td>
+      <td>{ formatCurrency(props.amount) }</td>
+    </tr>
+  )
 }
 
 function formatCurrency(cents) {
