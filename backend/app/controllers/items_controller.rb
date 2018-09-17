@@ -6,7 +6,7 @@ class ItemsController < ApplicationController
       order.merge_item(Item.new(item_params))
     end
 
-    if order.valid?
+    unless order.errors.any?
       render_success(order)
     else
       render_errors(order)

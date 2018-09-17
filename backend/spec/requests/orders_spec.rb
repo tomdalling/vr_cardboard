@@ -62,6 +62,20 @@ RSpec.describe '/orders' do
         quantity: 1123,
       )
     end
+
+    it 'will not update orders that have been confirmed' do
+      order.update(confirmed: true)
+
+      post "/orders/#{order.id}/items", params: {
+        item: {
+          product_id: product.id,
+          quantity: 123,
+        }
+      }
+
+      expect(response.status).to eq(422)
+      expect(order.reload.items).to be_empty
+    end
   end
 
   specify 'POST /orders/:id/confirm' do

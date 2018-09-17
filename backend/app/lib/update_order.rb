@@ -3,6 +3,11 @@ module UpdateOrder
   extend self
 
   def self.call(order)
+    if order.confirmed
+      order.errors.add(:base, "Can not update order after it has been confirmed")
+      return order
+    end
+
     Order.transaction do
       order.adjustments.delete_all
       yield(order)
