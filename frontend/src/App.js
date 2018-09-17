@@ -33,6 +33,7 @@ class Server {
         ],
         total: 12345,
         dirty: false,
+        confirmed: false,
       }), 1000)
     })
   }
@@ -46,6 +47,8 @@ class Server {
   submitOrder() {
     //TODO: here
     console.log("Submit order")
+    return this.fetchOrder()
+      .then(order => { return {...order, confirmed: true} })
   }
 }
 
@@ -80,7 +83,9 @@ class App extends Component {
 
   handleOrderSubmit = (event) => {
     event.preventDefault()
+    this.setState({ order: {...this.state.order, confirmed: "in_progress"} })
     this.server.submitOrder()
+      .then(order => this.setState({ order: order }))
   }
 
   render() {
@@ -179,10 +184,31 @@ class Order extends Component {
   render() {
     const order = this.props.order
 
+    let body;
     if(!order) {
-      return <div>Loading order...</div>
+      body = <p>Loading...</p>
+    } else if(order.items.length === 0){
+      body = <p>No items yet</p>
+    } else if(order.confirmed === "in_progress") {
+      body = <p>Submitting your order...</p>
+    } else if(order.confirmed) {
+      body = <p>Order submitted. Thank you for you patronage.</p>
+    } else {
+      body = <InProgressOrder order={order} onSubmit={this.props.onSubmit} />
     }
 
+    return (
+      <div>
+        <h2>Order</h2>
+        { body }
+      </div>
+    )
+  }
+}
+
+class InProgressOrder extends Component {
+  render() {
+    const order = this.props.order
     const items = order.items.map(i =>
       <OrderItem item={i} key={i.product.id} />
     )
@@ -197,32 +223,25 @@ class Order extends Component {
 
     return (
       <form onSubmit={this.props.onSubmit}>
-        <h2>Order</h2>
-        { order.items.length === 0 ? (
-          <p>No items yet</p>
-        ) : (
-          <div>
-            <table>
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th>Quantity</th>
-                  <th>Unit Price</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                { items }
-                { order.dirty ? (
-                  <tr><td colSpan="4">Updating order...</td></tr>
-                ) : (
-                  [...adjustments, total]
-                ) }
-              </tbody>
-            </table>
-            { !order.dirty && <input type="submit" value="Submit order" /> }
-          </div>
-        ) }
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Quantity</th>
+              <th>Unit Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            { items }
+            { order.dirty ? (
+              <tr><td colSpan="4">Updating order...</td></tr>
+            ) : (
+              [...adjustments, total]
+            ) }
+          </tbody>
+        </table>
+        { !order.dirty && <button>Submit order</button> }
       </form>
     )
   }
