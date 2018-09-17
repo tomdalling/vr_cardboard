@@ -18,11 +18,8 @@ class Server {
     })
   }
 
-  submitOrder() {
-    //TODO: here
-    console.log("Submit order")
-    return this.fetchCurrentOrder()
-      .then(order => ({...order, confirmed: true}))
+  submitOrder(order) {
+    return this.request("POST", `/orders/${order.id}/confirm`)
   }
 
   request(method, path, params) {
@@ -84,7 +81,7 @@ class App extends Component {
   handleOrderSubmit = (event) => {
     event.preventDefault()
     this.setState({ order: {...this.state.order, confirmed: "in_progress"} })
-    this.server.submitOrder()
+    this.server.submitOrder(this.state.order)
       .then(order => this.setState({ order: order }))
   }
 
