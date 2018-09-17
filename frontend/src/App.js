@@ -92,6 +92,11 @@ class App extends Component {
       .then(order => this.setState({ order: order }))
   }
 
+  handleNewOrder = () => {
+    this.setState({ order: null })
+    this.fetchCurrentOrder()
+  }
+
   render() {
     return (
       <div>
@@ -106,6 +111,7 @@ class App extends Component {
           <Order
             order={this.state.order}
             onSubmit={this.handleOrderSubmit}
+            onNewOrder={this.handleNewOrder}
             />
         </div>
       </div>
@@ -196,7 +202,7 @@ class Order extends Component {
     } else if(order.confirmed === "in_progress") {
       body = <p>Submitting your order...</p>
     } else if(order.confirmed) {
-      body = <p>Order submitted. Thank you for you patronage.</p>
+      body = <CompletedOrder onNewOrder={this.props.onNewOrder} />
     } else {
       body = <InProgressOrder order={order} onSubmit={this.props.onSubmit} />
     }
@@ -208,6 +214,15 @@ class Order extends Component {
       </div>
     )
   }
+}
+
+function CompletedOrder(props) {
+  return (
+    <div>
+      <p>Order submitted. Thank you for you patronage.</p>
+      <button onClick={props.onNewOrder}>Start new order</button>
+    </div>
+  )
 }
 
 class InProgressOrder extends Component {
