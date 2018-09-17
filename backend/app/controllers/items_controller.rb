@@ -1,8 +1,9 @@
 class ItemsController < ApplicationController
   def create
     order = Order.find(params[:order_id])
+
     UpdateOrder.(order) do
-      order.items.create(item_params)
+      order.merge_item(Item.new(item_params))
     end
 
     if order.valid?
