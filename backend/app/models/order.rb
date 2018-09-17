@@ -2,6 +2,8 @@ class Order < ApplicationRecord
   has_many :items
   has_many :adjustments
 
+  scope :unconfirmed, -> { where(confirmed: false) }
+
   def total_units
     items.map(&:quantity).sum
   end

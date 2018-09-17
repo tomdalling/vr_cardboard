@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_15_091144) do
+ActiveRecord::Schema.define(version: 2018_09_17_040115) do
 
   create_table "adjustments", force: :cascade do |t|
     t.integer "order_id"
@@ -28,7 +28,7 @@ ActiveRecord::Schema.define(version: 2018_09_15_091144) do
   end
 
   create_table "orders", force: :cascade do |t|
-    t.integer "total"
+    t.integer "total", default: 0
     t.boolean "confirmed", default: false
   end
 

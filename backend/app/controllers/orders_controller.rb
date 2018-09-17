@@ -1,4 +1,9 @@
 class OrdersController < ApplicationController
+  def current
+    order = Order.unconfirmed.last || Order.create
+    render_success(order)
+  end
+
   def create
     order = CreateOrder.(order_params)
     if order.valid?
