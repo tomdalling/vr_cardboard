@@ -220,7 +220,7 @@ class Order extends Component {
     } else if(order.confirmed === "in_progress") {
       body = <p>Submitting your order...</p>
     } else if(order.confirmed) {
-      body = <CompletedOrder onNewOrder={this.props.onNewOrder} />
+      body = <CompletedOrder order={order} onNewOrder={this.props.onNewOrder} />
     } else {
       body = <InProgressOrder order={order} onSubmit={this.props.onSubmit} />
     }
@@ -237,7 +237,8 @@ class Order extends Component {
 function CompletedOrder(props) {
   return (
     <div>
-      <p>Order submitted. Thank you for you patronage.</p>
+      <p>Order submitted. Your order number is #{props.order.id}.</p>
+      <p>Thank you for you patronage.</p>
       <button onClick={props.onNewOrder}>Start new order</button>
     </div>
   )
