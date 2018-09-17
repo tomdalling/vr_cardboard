@@ -78,8 +78,26 @@ class App extends Component {
       .then(order => this.setState({ order: order }))
   }
 
+  optimisticAddToOrder(product, quantity) {
+    const order = this.state.order
+    const existingItem = order.items.find(i => i.product.id === product.id)
+
+    let newItems
+    if(existingItem) {
+      newItems = order.items.map(i =>
+        // update quantity in existing item
+        i === existingItem ? {...i, quantity: i.quantity + quantity } : i
+      )
+    } else {
+      // append new item
+      newItems = [...order.items, { quantity: quantity, product: product }]
+    }
+
+    return {...order, items: newItems, dirty: true}
+  }
+
   handleAddToOrder = (product, quantity) => {
-    this.setState({ order: {...this.state.order, dirty: true} })
+    this.setState({ order: this.optimisticAddToOrder(product, quantity) })
 
     this.server.addToOrder(this.state.order, product, quantity)
       .then(order => this.setState({ order: order }))
