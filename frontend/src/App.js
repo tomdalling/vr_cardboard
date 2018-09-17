@@ -3,18 +3,19 @@ import './App.css';
 
 class Server {
   fetchProducts() {
-    return this.request("/products")
+    return this.request("GET", "/products")
       .then(payload => payload.products)
   }
 
   fetchCurrentOrder() {
-    return this.request("/orders/current")
+    return this.request("GET", "/orders/current")
   }
 
-  addToOrder(product, quantity) {
-    //TODO: here
-    console.log("Add to order:", product, quantity)
-    return this.fetchCurrentOrder()
+  addToOrder(order, product, quantity) {
+    return this.request("POST", `/orders/${order.id}/items`, {
+      "item[product_id]": product.id,
+      "item[quantity]": quantity,
+    })
   }
 
   submitOrder() {
@@ -24,8 +25,18 @@ class Server {
       .then(order => ({...order, confirmed: true}))
   }
 
-  request(path) {
-    return fetch("http://localhost:4000" + path)
+  request(method, path, params) {
+    let options = { method: method }
+
+    if(params) {
+      let formData = new FormData()
+      for(const key of Object.keys(params)) {
+        formData.append(key, params[key])
+      }
+      options.body = formData
+    }
+
+    return fetch("http://localhost:4000" + path, options)
       .then(response => response.json())
       .then(body => {
         if('data' in body) {
@@ -66,7 +77,7 @@ class App extends Component {
   handleAddToOrder = (product, quantity) => {
     this.setState({ order: {...this.state.order, dirty: true} })
 
-    this.server.addToOrder(product, quantity)
+    this.server.addToOrder(this.state.order, product, quantity)
       .then(order => this.setState({ order: order }))
   }
 
