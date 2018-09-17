@@ -6,8 +6,8 @@ class OrdersController < ApplicationController
 
   def confirm
     order = Order.find(params[:id])
-    order.confirmed = true
-    if order.save!
+
+    if order.update(confirmed: true)
       render_success(order)
     else
       render_errors(order)
