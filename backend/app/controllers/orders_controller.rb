@@ -13,10 +13,4 @@ class OrdersController < ApplicationController
       render_errors(order)
     end
   end
-
-  private
-
-    def order_params
-      params.require(:order).permit(items: [:product_id, :quantity])
-    end
 end
