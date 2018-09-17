@@ -1,31 +1,23 @@
 import React, { Component } from 'react';
 import './App.css';
 
-class App extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      order: null,
-      products: null,
-    }
-    this.fetchProducts()
-    this.fetchOrder()
-  }
+class Server {
+  //static get baseURL() { return "http://localhost:4000" }
 
   fetchProducts() {
     //TODO: proper backend fetch
-    setTimeout(() => {
-      this.setState({products: [
+    return new Promise(function(resolve, reject) {
+      setTimeout(() => resolve([
         { id: 100, title: "High Quality", price: 2000 },
         { id: 200, title: "Premium", price: 3000 },
-      ]})
-    }, 500)
+      ]), 1000)
+    })
   }
 
   fetchOrder() {
     //TODO: proper backend fetch
-    setTimeout(() => {
-      this.setState({ order: {
+    return new Promise(function(resolve, reject) {
+      setTimeout(() => resolve({
         items: [
           {
             quantity: 2,
@@ -41,20 +33,54 @@ class App extends Component {
         ],
         total: 12345,
         dirty: false,
-      } })
-    }, 500)
+      }), 1000)
+    })
   }
 
-  handleAddToOrder = (product, quantity) => {
+  addToOrder(product, quantity) {
     //TODO: here
     console.log("Add to order:", product, quantity)
-    this.setState({ order: {...this.state.order, dirty: true} })
+    return this.fetchOrder()
+  }
+
+  submitOrder() {
+    //TODO: here
+    console.log("Submit order")
+  }
+}
+
+class App extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      order: null,
+      products: null,
+    }
+    this.server = new Server()
+    this.fetchProducts()
     this.fetchOrder()
   }
 
-  handleOrderSubmit = () => {
-    //TODO: here
-    console.log("Submit order:", this.state.order)
+  fetchProducts() {
+    this.server.fetchProducts()
+      .then(products => this.setState({products: products}))
+  }
+
+  fetchOrder() {
+    this.server.fetchOrder()
+      .then(order => this.setState({ order: order }))
+  }
+
+  handleAddToOrder = (product, quantity) => {
+    this.setState({ order: {...this.state.order, dirty: true} })
+
+    this.server.addToOrder(product, quantity)
+      .then(order => this.setState({ order: order }))
+  }
+
+  handleOrderSubmit = (event) => {
+    event.preventDefault()
+    this.server.submitOrder()
   }
 
   render() {
