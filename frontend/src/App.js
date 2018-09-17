@@ -33,7 +33,8 @@ class Server {
       options.body = formData
     }
 
-    return fetch("http://localhost:4000" + path, options)
+    return this.delay(500)
+      .then(() => fetch("http://localhost:4000" + path, options))
       .then(response => response.json())
       .then(body => {
         if('data' in body) {
@@ -42,6 +43,12 @@ class Server {
           return Promise.reject(body.errors)
         }
       })
+  }
+
+  delay(milliseconds) {
+    return new Promise((resolve, _) => {
+      setTimeout((() => resolve()), milliseconds)
+    })
   }
 }
 
