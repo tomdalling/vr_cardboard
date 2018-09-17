@@ -60,6 +60,9 @@ class App extends Component {
       products: null,
     }
     this.server = new Server()
+  }
+
+  componentDidMount() {
     this.fetchProducts()
     this.fetchOrder()
   }
