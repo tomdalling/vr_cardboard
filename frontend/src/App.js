@@ -2,16 +2,9 @@ import React, { Component } from 'react';
 import './App.css';
 
 class Server {
-  //static get baseURL() { return "http://localhost:4000" }
-
   fetchProducts() {
-    //TODO: proper backend fetch
-    return new Promise(function(resolve, reject) {
-      setTimeout(() => resolve([
-        { id: 100, title: "High Quality", price: 2000 },
-        { id: 200, title: "Premium", price: 3000 },
-      ]), 1000)
-    })
+    return this.request("/products")
+      .then(payload => payload.products)
   }
 
   fetchOrder() {
@@ -48,7 +41,19 @@ class Server {
     //TODO: here
     console.log("Submit order")
     return this.fetchOrder()
-      .then(order => { return {...order, confirmed: true} })
+      .then(order => ({...order, confirmed: true}))
+  }
+
+  request(path) {
+    return fetch("http://localhost:4000" + path)
+      .then(response => response.json())
+      .then(body => {
+        if('data' in body) {
+          return body.data
+        } else {
+          return Promise.reject(body.errors)
+        }
+      })
   }
 }
 
@@ -69,7 +74,7 @@ class App extends Component {
 
   fetchProducts() {
     this.server.fetchProducts()
-      .then(products => this.setState({products: products}))
+      .then(products => this.setState({ products: products }))
   }
 
   fetchOrder() {
