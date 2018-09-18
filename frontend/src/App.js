@@ -138,21 +138,22 @@ class App extends Component {
 class ProductList extends Component {
   render() {
     const products = this.props.products
-    if(products) {
-      return (
-        <div className="w-1/2">
-          {this.props.products.map(product =>
+    return (
+      <div className="w-1/2 pr-4">
+        <h2 className="mb-4">Catalogue</h2>
+        { products ? (
+          this.props.products.map(product =>
             <Product
               product={product}
               onAddToOrder={this.props.onAddToOrder}
               key={product.id}
               />
-          )}
-        </div>
-      )
-    } else {
-      return <div>Loading catalogue...</div>
-    }
+          )
+        ) : (
+          <p className="p-4 bg-white">Loading catalogue...</p>
+        ) }
+      </div>
+    )
   }
 }
 
@@ -191,16 +192,22 @@ class Product extends Component {
   render() {
     const product = this.props.product
     return (
-      <div>
-        <h2>{product.title}</h2>
-        <p>{formatCurrency(product.price)} each</p>
-        <p>
+      <div className="bg-white p-4 mb-4">
+        <div className="mb-4">
+          <h3 className="mb-2 inline mr-4">{product.title}</h3>
+          <span className="mb-2">{formatCurrency(product.price)} each</span>
+        </div>
+        <div>
           Quantity:
-          <input value={this.state.quantity} onChange={this.handleQuantityChange} />
-          <button onClick={this.onAddToOrder} disabled={!this.isQuantityValid()}>
+          <input
+            className="border border-orange-light rounded w-12 p-2 mx-2"
+            value={this.state.quantity}
+            onChange={this.handleQuantityChange}
+            />
+          <button className="btn px-4 py-1" onClick={this.onAddToOrder} disabled={!this.isQuantityValid()}>
             Add to order
           </button>
-        </p>
+        </div>
       </div>
     )
   }
@@ -212,11 +219,11 @@ class Order extends Component {
 
     let body;
     if(!order) {
-      body = <p>Loading...</p>
+      body = <span>Loading...</span>
     } else if(order.items.length === 0){
-      body = <p>No items yet</p>
+      body = <span>No items yet</span>
     } else if(order.confirmed === "in_progress") {
-      body = <p>Submitting your order...</p>
+      body = <span>Submitting your order...</span>
     } else if(order.confirmed) {
       body = <CompletedOrder order={order} onNewOrder={this.props.onNewOrder} />
     } else {
@@ -226,7 +233,9 @@ class Order extends Component {
     return (
       <div className="w-1/2">
         <h2 className="mb-4">Your Order</h2>
-        { body }
+        <div className="bg-white p-4">
+          { body }
+        </div>
       </div>
     )
   }
@@ -237,7 +246,9 @@ function CompletedOrder(props) {
     <div>
       <p>Order submitted. Your order number is #{props.order.id}.</p>
       <p>Thank you for you patronage.</p>
-      <button onClick={props.onNewOrder}>Start new order</button>
+      <button className="btn p-2" onClick={props.onNewOrder}>
+        Start new order
+      </button>
     </div>
   )
 }
@@ -253,7 +264,7 @@ class InProgressOrder extends Component {
         description={adj.description}
         amount={adj.amount}
         key={adj.description}
-        rowClassName={ idx === 0 && "border-t" }
+        rowClassName={ idx === 0 ? "border-t" : undefined }
         />
     )
     const total = <Adjustment
@@ -278,14 +289,14 @@ class InProgressOrder extends Component {
           <tbody>
             { items }
             { order.dirty ? (
-              <tr><td colSpan="4">Updating order...</td></tr>
+              <tr><td colSpan="4" className="text-center">Updating order...</td></tr>
             ) : (
               [...adjustments, total]
             ) }
           </tbody>
         </table>
         { !order.dirty &&
-          <button className="w-full border rounded-full p-4 bg-orange-light hover:bg-orange">
+          <button className="btn w-full p-2">
             Submit order
           </button>
         }
