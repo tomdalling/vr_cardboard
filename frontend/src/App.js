@@ -117,15 +117,13 @@ class App extends Component {
 
   render() {
     return (
-      <div>
-        <h1>VR Cardboard Store</h1>
-        <div style={{ float: 'left' }}>
+      <div className="container p-4 mx-auto">
+        <h1 className="mb-4">VR Cardboard Store</h1>
+        <div className="flex">
           <ProductList
             products={this.state.products}
             onAddToOrder={this.handleAddToOrder}
             />
-        </div>
-        <div style={{ float: 'right' }}>
           <Order
             order={this.state.order}
             onSubmit={this.handleOrderSubmit}
@@ -142,7 +140,7 @@ class ProductList extends Component {
     const products = this.props.products
     if(products) {
       return (
-        <div>
+        <div className="w-1/2">
           {this.props.products.map(product =>
             <Product
               product={product}
@@ -226,8 +224,8 @@ class Order extends Component {
     }
 
     return (
-      <div>
-        <h2>Order</h2>
+      <div className="w-1/2">
+        <h2 className="mb-4">Your Order</h2>
         { body }
       </div>
     )
@@ -250,24 +248,31 @@ class InProgressOrder extends Component {
     const items = order.items.map(i =>
       <OrderItem item={i} key={i.product.id} />
     )
-    const adjustments = order.adjustments.map(adj =>
+    const adjustments = order.adjustments.map((adj, idx) =>
       <Adjustment
         description={adj.description}
         amount={adj.amount}
         key={adj.description}
+        rowClassName={ idx === 0 && "border-t" }
         />
     )
-    const total = <Adjustment description="Total" amount={order.total} key="Total"/>
+    const total = <Adjustment
+      description="Total"
+      amount={order.total}
+      key="Total"
+      rowClassName="font-bold"
+      amountClassName="border-t border-b border-black"
+      />
 
     return (
       <form onSubmit={this.props.onSubmit}>
-        <table>
+        <table className="w-full mb-4">
           <thead>
-            <tr>
+            <tr className="bg-orange-lighter">
               <th>Item</th>
-              <th>Quantity</th>
-              <th>Unit Price</th>
-              <th>Total</th>
+              <th className="numeric">Quantity</th>
+              <th className="numeric">Unit Price</th>
+              <th className="numeric">Total</th>
             </tr>
           </thead>
           <tbody>
@@ -279,7 +284,11 @@ class InProgressOrder extends Component {
             ) }
           </tbody>
         </table>
-        { !order.dirty && <button>Submit order</button> }
+        { !order.dirty &&
+          <button className="w-full border rounded-full p-4 bg-orange-light hover:bg-orange">
+            Submit order
+          </button>
+        }
       </form>
     )
   }
@@ -292,9 +301,9 @@ class OrderItem extends Component {
     return (
       <tr>
         <td>{item.product.title}</td>
-        <td>{item.quantity}</td>
-        <td>{formatCurrency(item.product.price)}</td>
-        <td>{formatCurrency(item.product.price * item.quantity)}</td>
+        <td className="numeric">{item.quantity}</td>
+        <td className="numeric">{formatCurrency(item.product.price)}</td>
+        <td className="numeric">{formatCurrency(item.product.price * item.quantity)}</td>
       </tr>
     )
   }
@@ -302,9 +311,11 @@ class OrderItem extends Component {
 
 function Adjustment(props) {
   return (
-    <tr>
-      <td colSpan="3">{ props.description }</td>
-      <td>{ formatCurrency(props.amount) }</td>
+    <tr className={props.rowClassName}>
+      <td colSpan="3" className="text-right">{ props.description }</td>
+      <td className={"numeric " + (props.amountClassName || "")}>
+        { formatCurrency(props.amount) }
+      </td>
     </tr>
   )
 }
